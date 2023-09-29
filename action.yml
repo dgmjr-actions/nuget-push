@@ -1,0 +1,88 @@
+name: Push the *.nupkg to NuGet feeds
+author: David G. Moore, Jr., <david@dgmjr.io>
+description: Push the *.nupkg to NuGet feeds
+
+branding:
+  icon: package
+  color: blue
+
+inputs:
+  environment:
+    type: string
+    default: Local
+    required: false
+  git-token:
+    type: string
+    required: true
+  git-username:
+    type: string
+    required: false
+    default: dgmjr
+  git-nuget-endpoint:
+    type: string
+    required: false
+    default: https://nuget.pkg.github.com/dgmjr-io/index.json
+  private-nuget-endpoint:
+    type: string
+    required: false
+    default: https://proget.dgmjr.io/nuget/live/v3/index.json
+  private-nuget-api-key:
+    type: string
+    required: false
+    default: 
+  nuget-api-key:
+    type: string
+    required: false
+  repo:
+    type: string
+    required: true
+    default: dgmjr-io/DgmjrSdk
+  configuration:
+    type: string
+    required: false
+    default: Release
+  package-version-override:
+    type: string
+    required: false
+    default: 0.0.1
+  project-file-path:
+    type: string
+    required: true
+  push-nuget: 
+    type: boolean
+    required: false
+    default: false
+  push-dgmjr-io: 
+    type: boolean
+    required: false
+    default: true
+  push-github: 
+    type: boolean
+    required: false
+    default: false
+
+runs:
+  using: composite
+  - id: Run-setup-dgmjrsdk
+    uses: dgmjr-actions/setup-dgmjrsdk@main
+    with:
+      git-token: ${{ inputs.git-token }}
+      environment: Release
+      git-nuget-endpoint: ${{ inputs.git-nuget-endpoint }}
+      private-nuget-endpoint: ${{ inputs.private-nuget-endpoint }}
+      private-nuget-api-key: ${{ inputs.private-nuget-api-key }}
+      nuget-api-key: ${{ inputs.nuget-api-key }}
+  - id: Download-NuGet-Package
+    uses: actions/download-artifact@v2.1.1
+    with:
+      name: NuGetPackage
+  - id: Publish-NuGet-to-GitHub-Packages
+    shell: bash
+    run: dotnet nuget push **/*.nupkg --source GitHub --api-key ${{ inputs.git-token }}
+  - name: Publish-NuGet-to-DGMJR-IO-private-feed
+    shell: bash
+    run: dotnet nuget push **/*.nupkg --source dgmjr-io --api-key ${{ inputs.private-nuget-api-key: }}
+  - name: Publish-NuGet-to-NuGet-public-feed
+    shell: bash
+    run: dotnet nuget push **/*.nupkg --source nuget.org --api-key ${{ inputs.nuget-api-key: }}
+        
