@@ -36,7 +36,6 @@ inputs:
   repo:
     type: string
     required: true
-    default: dgmjr-io/DgmjrSdk
   configuration:
     type: string
     required: false
@@ -79,10 +78,13 @@ runs:
   - id: Publish-NuGet-to-GitHub-Packages
     shell: bash
     run: dotnet nuget push **/*.nupkg --source GitHub --api-key ${{ inputs.git-token }}
+    if: ${{ inputs.push-github }}
   - name: Publish-NuGet-to-DGMJR-IO-private-feed
     shell: bash
     run: dotnet nuget push **/*.nupkg --source dgmjr-io --api-key ${{ inputs.private-nuget-api-key: }}
+    if: ${{ inputs.push-dgmjr-io }}
   - name: Publish-NuGet-to-NuGet-public-feed
     shell: bash
     run: dotnet nuget push **/*.nupkg --source nuget.org --api-key ${{ inputs.nuget-api-key: }}
+    if: ${{ inputs.push-nuget }}
         
