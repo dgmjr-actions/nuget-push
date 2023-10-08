@@ -60,71 +60,31 @@ inputs:
     required: false
     default: false
 
-jobs:
-  push-github:
-    runs:
-      using: composite
-      steps:
-        - id: Run-setup-dgmjrsdk
-          uses: dgmjr-actions/setup-dgmjrsdk@main
-          with:
-            git-token: ${{ inputs.git-token }}
-            environment: Release
-            git-nuget-endpoint: ${{ inputs.git-nuget-endpoint }}
-            private-nuget-endpoint: ${{ inputs.private-nuget-endpoint }}
-            private-nuget-api-key: ${{ inputs.private-nuget-api-key }}
-            nuget-api-key: ${{ inputs.nuget-api-key }}
-        - id: Download-NuGet-Package
-          uses: actions/download-artifact@v2.1.1
-          with:
-            name: NuGetPackage(s)
-        - id: Publish-NuGet-to-GitHub-Packages
-          shell: bash
-          run: dotnet nuget push **/*.nupkg --source GitHub --api-key ${{ inputs.git-token }}
-          if: ${{ inputs.push-github }}
-
-  push-dgmjr-io:
-    runs:
-      using: composite
-      steps:
-        - id: Run-setup-dgmjrsdk
-          uses: dgmjr-actions/setup-dgmjrsdk@main
-          with:
-            git-token: ${{ inputs.git-token }}
-            environment: Release
-            git-nuget-endpoint: ${{ inputs.git-nuget-endpoint }}
-            private-nuget-endpoint: ${{ inputs.private-nuget-endpoint }}
-            private-nuget-api-key: ${{ inputs.private-nuget-api-key }}
-            nuget-api-key: ${{ inputs.nuget-api-key }}
-        - id: Download-NuGet-Package
-          uses: actions/download-artifact@v2.1.1
-          with:
-            name: NuGetPackage(s)
-        - name: Publish-NuGet-to-DGMJR-IO-private-feed
-          shell: bash
-          run: dotnet nuget push **/*.nupkg --source dgmjr-io --api-key ${{ inputs.private-nuget-api-key }}
-          if: ${{ inputs.push-dgmjr-io }}
-
-          
-  push-nuget:
-    runs:
-      using: composite
-      steps:
-        - id: Run-setup-dgmjrsdk
-          uses: dgmjr-actions/setup-dgmjrsdk@main
-          with:
-            git-token: ${{ inputs.git-token }}
-            environment: Release
-            git-nuget-endpoint: ${{ inputs.git-nuget-endpoint }}
-            private-nuget-endpoint: ${{ inputs.private-nuget-endpoint }}
-            private-nuget-api-key: ${{ inputs.private-nuget-api-key }}
-            nuget-api-key: ${{ inputs.nuget-api-key }}
-        - id: Download-NuGet-Package
-          uses: actions/download-artifact@v2.1.1
-          with:
-            name: NuGetPackage(s)
-        - name: Publish-NuGet-to-NuGet-public-feed
-          shell: bash
-          run: dotnet nuget push **/*.nupkg --source nuget.org --api-key ${{ inputs.nuget-api-key }}
-          if: ${{ inputs.push-nuget }}
-              
+runs:
+  using: composite
+  steps:
+    - id: Run-setup-dgmjrsdk
+      uses: dgmjr-actions/setup-dgmjrsdk@main
+      with:
+        git-token: ${{ inputs.git-token }}
+        environment: Release
+        git-nuget-endpoint: ${{ inputs.git-nuget-endpoint }}
+        private-nuget-endpoint: ${{ inputs.private-nuget-endpoint }}
+        private-nuget-api-key: ${{ inputs.private-nuget-api-key }}
+        nuget-api-key: ${{ inputs.nuget-api-key }}
+    - id: Download-NuGet-Package
+      uses: actions/download-artifact@v2.1.1
+      with:
+        name: NuGetPackage(s)
+    - id: Publish-NuGet-to-GitHub-Packages
+      shell: bash
+      run: dotnet nuget push **/*.nupkg --source GitHub --api-key ${{ inputs.git-token }}
+      if: ${{ inputs.push-github }}
+    - name: Publish-NuGet-to-DGMJR-IO-private-feed
+      shell: bash
+      run: dotnet nuget push **/*.nupkg --source dgmjr-io --api-key ${{ inputs.private-nuget-api-key }}
+      if: ${{ inputs.push-dgmjr-io }}
+    - name: Publish-NuGet-to-NuGet-public-feed
+      shell: bash
+      run: dotnet nuget push **/*.nupkg --source nuget.org --api-key ${{ inputs.nuget-api-key }}
+      if: ${{ inputs.push-nuget }}
