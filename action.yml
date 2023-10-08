@@ -49,15 +49,15 @@ inputs:
     required: true
   push-nuget: 
     type: boolean
-    required: false
+    required: true
     default: false
   push-dgmjr-io: 
     type: boolean
-    required: false
+    required: true
     default: true
   push-github: 
     type: boolean
-    required: false
+    required: true
     default: false
 
 runs:
@@ -79,12 +79,12 @@ runs:
     - id: Publish-NuGet-to-GitHub-Packages
       shell: bash
       run: dotnet nuget push **/*.nupkg --source GitHub --api-key ${{ inputs.git-token }}
-      if: ${{ inputs.push-github }}
+      if: '${{ inputs.push-github }}'=='true'
     - name: Publish-NuGet-to-DGMJR-IO-private-feed
       shell: bash
       run: dotnet nuget push **/*.nupkg --source dgmjr-io --api-key ${{ inputs.private-nuget-api-key }}
-      if: ${{ inputs.push-dgmjr-io }}
+      if: '${{ inputs.push-dgmjr-io }}'=='true'
     - name: Publish-NuGet-to-NuGet-public-feed
       shell: bash
       run: dotnet nuget push **/*.nupkg --source nuget.org --api-key ${{ inputs.nuget-api-key }}
-      if: ${{ inputs.push-nuget }}
+      if: '${{ inputs.push-nuget }}'=='true'
