@@ -8,57 +8,56 @@ branding:
 
 inputs:
   environment:
-    type: string
+    description: The environment to use for the build
     default: Local
     required: false
   git-token:
-    type: string
+    description: The GitHub token to use for authentication
     required: true
   git-username:
-    type: string
+    description: The GitHub username to use for authentication
     required: false
     default: dgmjr
   git-nuget-endpoint:
-    type: string
+    description: The GitHub NuGet endpoint to use for the NuGet package
     required: false
     default: https://nuget.pkg.github.com/dgmjr-io/index.json
   private-nuget-endpoint:
-    type: string
+    description: The private NuGet endpoint to use for the NuGet package
     required: false
     default: https://proget.dgmjr.io/nuget/proget/v3/index.json
   private-nuget-api-key:
-    type: string
+    description: The private NuGet API key to use for the NuGet package
     required: false
-    default: 
   nuget-api-key:
-    type: string
+    description: The NuGet API key to use for the NuGet package
     required: false
   repo:
-    type: string
+    description: The GitHub repository to use for the build
     required: true
   configuration:
-    type: string
+    description: The configuration to use for the build
     required: false
     default: Release
   package-version-override:
-    type: string
+    description: The package version to use for the build
     required: false
     default: 0.0.1
   project-file-path:
-    type: string
+    description: The project file path to use for the build
     required: true
-  push-nuget: 
-    type: boolean
+  push-nuget:
+    description: Push the *.nupkg to NuGet
     required: true
-    default: false
-  push-dgmjr-io: 
-    type: boolean
+    default: 'false'
+  push-dgmjr-io:
+    description: Push the *.nupkg to dgmjr.io
     required: true
-    default: true
-  push-github: 
-    type: boolean
+    default: 'true'
+  push-github:
+    description: Push the *.nupkg to GitHub
     required: true
-    default: false
+    default: 'false'
 
 runs:
   using: composite

@@ -1,14 +1,28 @@
-# // ts-node "$( cd ${0%/*} && pwd -P )/ts/delete-github-package-version.ts" $ 1 $2 $3 $4 $5 $6 $7 $8 $9
+#!/usr/bin/env pwsh
+
 [CmdletBinding()]
+[Alias("Delete-GitHubPackageVersion")]
 param(
+    [Parameter(Mandatory)]
     [Alias("pkg", "p")]
     [string]$PackageId,
+    [Parameter(Mandatory)]
     [Alias("ver", "v")]
     [string]$PackageVersion,
     [Alias("t", "gh")]
-    [string]$GitHubToken,
+    [string]$GitHubToken = $env:GITHUB_TOKEN,
+    [Parameter(Mandatory)]
     [Alias("org")]
-    [string]$GitHubOrganization
+    [string]$GitHubOrganization,
+    [Alias("type")]
+    [ValidateSet("npm", "maven", "rubygems", "docker", "nuget", "container", IgnoreCase, ErrorMessage = "The package type must be one of the following: npm, maven, rubygems, docker, nuget, container")]
+    [string]$PackageType = "nuget"
 )
 
-node "$PSScriptRoot/js/delete-github-package-version.js" $GitHubOrganization $PackageId $PackageVersion ($GitHubToken ?? $env:GITHUB_TOKEN)
+process {
+  Write-Output "node '$PSScriptRoot/js/delete-github-package-version.js'  $GitHubOrganization $PackageId $PackageVersion $PackageType $GitHubToken"
+  node "$PSScriptRoot/js/delete-github-package-version.js"  $GitHubOrganization $PackageId $PackageVersion $PackageType $GitHubToken
+  Write-Output ""
+  Write-Output "ts-node '$PSScriptRoot/ts/delete-github-package-version.ts' -o $GitHubOrganization -i $PackageId -v "$PackageVersion" -t $PackageType -k $GitHubToken"
+  ts-node $PSScriptRoot/ts/delete-github-package-version.ts -o $GitHubOrganization -i $PackageId -v "$PackageVersion" -t $PackageType -k $GitHubToken
+}
