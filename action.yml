@@ -93,6 +93,7 @@ runs:
         package-type: nuget
         package-version: ${{ steps.Get-Package-Version.outputs.Version }}
         repo: ${{ inputs.repo }}
+    - id: Push-to-GitHub-Packages
       shell: bash
       run: dotnet nuget push **/*.nupkg --source GitHub --api-key ${{ inputs.git-token }}
       if: inputs.push-github == 'true'
