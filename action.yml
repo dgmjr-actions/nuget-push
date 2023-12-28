@@ -1,9 +1,9 @@
-name: Push the *.nupkg to NuGet feeds
+name: NuGet Push
 author: David G. Moore, Jr., <david@dgmjr.io>
 description: Push the *.nupkg to NuGet feeds
 
 branding:
-  icon: package
+  icon: upload-cloud
   color: blue
 
 inputs:
