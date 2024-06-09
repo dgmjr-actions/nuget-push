@@ -25,7 +25,7 @@ inputs:
   private-nuget-endpoint:
     description: The private NuGet endpoint to use for the NuGet package
     required: false
-    default: https://proget.dgmjr.io/nuget/proget/v3/index.json
+    default: https://dgmjr.nuget.software/index.json
   private-nuget-api-key:
     description: The private NuGet API key to use for the NuGet package
     required: false
