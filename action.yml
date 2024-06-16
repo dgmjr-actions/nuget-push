@@ -83,7 +83,7 @@ runs:
       run: echo "Organization=$("${{ inputs.repo }}".Split('/')[1])" >> "$GITHUB_OUTPUT"
     - id: Get-Package-Version
       shell: pwsh
-      run: echo "Version=$(Push-Location && Change-Location $([System.IO.Path]::GetDirectoryName("${{ inputs.project-file-path }}")) && minver && Pop-Location)" >> $"GITHUB_OUTPUT"
+      run: echo "Version=$(Push-Location && Set-Location $([System.IO.Path]::GetDirectoryName("${{ inputs.project-file-path }}")) && minver && Pop-Location)" >> $"GITHUB_OUTPUT"
     - id: Delete-GitHub-Package-Version
       uses: dgmjr-actions/delete-github-package-version@main
       with:
