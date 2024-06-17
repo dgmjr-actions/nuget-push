@@ -75,15 +75,15 @@ runs:
       uses: actions/download-artifact@v2.1.1
       with:
         name: NuGetPackage(s)
-    # - id: Get-Package-Name
-    #   shell: pwsh
-    #   run: echo "PackageName=$([System.IO.Path]::GetFileNameWithoutExtension("${{ inputs.project-file-path }}"))" >> "$GITHUB_OUTPUT"
-    # - id: Get-Organization
-    #   shell: pwsh
-    #   run: echo "Organization=$("${{ inputs.repo }}".Split('/')[1])" >> "$GITHUB_OUTPUT"
-    # - id: Get-Package-Version
-    #   shell: pwsh
-    #   run: echo "Version=$(Push-Location && Set-Location $([System.IO.Path]::GetDirectoryName("${{ inputs.project-file-path }}")) && minver && Pop-Location)" >> $"GITHUB_OUTPUT"
+    - id: Get-Package-Name
+      shell: pwsh
+      run: echo "PackageName=$([System.IO.Path]::GetFileNameWithoutExtension("${{ inputs.project-file-path }}"))" >> "$GITHUB_OUTPUT"
+    - id: Get-Organization
+      shell: pwsh
+      run: echo "Organization=$("${{ inputs.repo }}".Split('/')[1])" >> "$GITHUB_OUTPUT"
+    - id: Get-Package-Version
+      shell: pwsh
+      run: echo "Version=$(Push-Location && Set-Location $([System.IO.Path]::GetDirectoryName("${{ inputs.project-file-path }}")) && minver && Pop-Location)" >> $"GITHUB_OUTPUT"
     # - id: Delete-GitHub-Package-Version
     #   uses: dgmjr-actions/delete-github-package-version@main
     #   with:
@@ -97,11 +97,14 @@ runs:
     #   shell: bash
     #   run: dotnet nuget push **/*.nupkg --source GitHub --api-key ${{ inputs.git-token }}
     #   if: inputs.push-github == 'true'
-    - id: Publish-NuGet-to-DGMJR-IO-private-feed
+    - name: Delete existing package (if it exists) in private feed
+      shell: pwsh
+      run: dotnet nuget delete ${{ steps.Get-Package-Name.outputs.PackageName }} ${{ steps.Get-Package-Version.outputs.Version }}
+    - name: Publish NuGet package to private feed
       shell: bash
       run: dotnet nuget push **/*.nupkg --source private --api-key ${{ inputs.private-nuget-api-key }}
       if: inputs.push-private == 'true'
-    - id: Publish-NuGet-to-NuGet-public-feed
+    - name: Publish NuGet package to NuGet public feed
       shell: bash
       run: dotnet nuget push **/*.nupkg --source nuget.org --api-key ${{ inputs.nuget-api-key }}
       if: inputs.push-nuget == 'true'
